@@ -16,176 +16,371 @@ from products import (
 
 from discounts import apply_promo_code
 
+from users import Customer, Admin
+
+from orders import checkout
+
 
 products = [
     Electronics(1, "iPhone 15", 450000, 5, 4.8, 12),
     Electronics(2, "Samsung Galaxy S24", 420000, 3, 4.7, 12),
     Electronics(3, "Wireless Mouse", 12000, 15, 4.5, 6),
+
     Clothing(4, "Nike Hoodie", 35000, 8, 4.6, "M"),
     Clothing(5, "Adidas T-Shirt", 18000, 10, 4.3, "L"),
+
     Food(6, "Chocolate Box", 7000, 20, 4.9, "2026-12-01"),
-    Food(7, "Coffee Pack", 8500, 0, 4.4, "2026-10-15")
+    Food(7, "Coffee Pack", 8500, 5, 4.4, "2026-10-15")
 ]
 
 
+customer = Customer(
+    1,
+    "Moldir",
+    "moldir@example.com",
+    "1234"
+)
+
+admin = Admin(
+    1,
+    "Admin",
+    "admin@example.com",
+    "admin123"
+)
+
+orders = []
+
+
 while True:
-    print("\n===== PRODUCT MENU =====")
-    print("1. Show all products")
-    print("2. Search product")
-    print("3. Filter by category")
-    print("4. Show available products")
-    print("5. Sort by price")
-    print("6. Sort by rating")
-    print("7. Recommend products")
-    print("8. Apply promo code")
-    print("9. Reduce stock")
-    print("10. Add product")
-    print("11. Remove product")
+
+    print("\n===== ONLINE STORE =====")
+    print("1. Admin")
+    print("2. Customer")
     print("0. Exit")
 
-    choice = input("Enter your choice: ")
+    main_choice = input("Choose role: ")
 
-    try:
-        if choice == "1":
-            show_all_products(products)
+    # ================= ADMIN =================
 
-        elif choice == "2":
-            keyword = input("Enter product name: ")
-            result = search_product(products, keyword)
-            show_all_products(result)
+    if main_choice == "1":
 
-        elif choice == "3":
-            category = input("Enter category: ")
-            result = filter_by_category(products, category)
-            show_all_products(result)
+        while True:
 
-        elif choice == "4":
-            result = filter_available_products(products)
-            show_all_products(result)
+            print("\n===== ADMIN MENU =====")
 
-        elif choice == "5":
-            result = sort_by_price(products)
-            show_all_products(result)
+            print("1. Show all products")
+            print("2. Add product")
+            print("3. Remove product")
+            print("4. Reduce stock")
+            print("5. Show available products")
+            print("0. Back")
 
-        elif choice == "6":
-            result = sort_by_rating(products)
-            show_all_products(result)
+            admin_choice = input("Enter choice: ")
 
-        elif choice == "7":
-            category = input("Enter category: ")
-            result = recommend_products(products, category)
-            show_all_products(result)
+            try:
 
-        elif choice == "8":
-            product_id = int(input("Enter product ID: "))
-            promo_code = input("Enter promo code: ")
+                if admin_choice == "1":
 
-            product = find_product_by_id(products, product_id)
+                    show_all_products(products)
 
-            if product is not None:
-                final_price = apply_promo_code(product.price, promo_code)
-                print("Original price:", product.price, "KZT")
-                print("Final price:", final_price, "KZT")
-            else:
-                print("Product not found.")
+                elif admin_choice == "2":
 
-        elif choice == "9":
-            product_id = int(input("Enter product ID: "))
-            quantity = int(input("Enter quantity: "))
+                    print("\nChoose category:")
+                    print("1. Electronics")
+                    print("2. Clothing")
+                    print("3. Food")
 
-            product = find_product_by_id(products, product_id)
+                    category_choice = input("Enter category: ")
 
-            if product is not None:
-                product.reduce_stock(quantity)
-            else:
-                print("Product not found.")
-        elif choice == "10":
+                    product_id = len(products) + 1
 
-            print("\nChoose category:")
-            print("1. Electronics")
-            print("2. Clothing")
-            print("3. Food")
+                    name = input("Enter product name: ")
 
-            category_choice = input("Enter category: ")
+                    price = float(input("Enter price: "))
 
-            product_id = len(products) + 1
+                    stock = int(input("Enter stock quantity: "))
 
-            name = input("Enter product name: ")
+                    rating = float(input("Enter rating: "))
 
-            price = float(input("Enter price: "))
+                    if category_choice == "1":
 
-            stock = int(input("Enter stock quantity: "))
+                        warranty = int(
+                            input("Enter warranty months: ")
+                        )
 
-            rating = float(input("Enter rating: "))
+                        new_product = Electronics(
+                            product_id,
+                            name,
+                            price,
+                            stock,
+                            rating,
+                            warranty
+                        )
 
-            if category_choice == "1":
-                warranty = int(input("Enter warranty months: "))
+                    elif category_choice == "2":
 
-                new_product = Electronics(
-                    product_id,
-                    name,
-                    price,
-                    stock,
-                    rating,
-                    warranty
-                )
+                        size = input("Enter size: ")
 
-            elif category_choice == "2":
-                size = input("Enter size: ")
+                        new_product = Clothing(
+                            product_id,
+                            name,
+                            price,
+                            stock,
+                            rating,
+                            size
+                        )
 
-                new_product = Clothing(
-                    product_id,
-                    name,
-                    price,
-                    stock,
-                    rating,
-                    size
-                )
+                    elif category_choice == "3":
 
-            elif category_choice == "3":
-                expiry_date = input("Enter expiry date: ")
+                        expiry_date = input(
+                            "Enter expiry date: "
+                        )
 
-                new_product = Food(
-                    product_id,
-                    name,
-                    price,
-                    stock,
-                    rating,
-                    expiry_date
-                )
+                        new_product = Food(
+                            product_id,
+                            name,
+                            price,
+                            stock,
+                            rating,
+                            expiry_date
+                        )
 
-            else:
-                print("Invalid category.")
-                continue
+                    else:
+                        print("Invalid category.")
+                        continue
 
-            products.append(new_product)
+                    admin.add_product(products, new_product)
 
-            save_products(products, "products.json")
+                    save_products(products, "products.json")
 
-            print("Product added successfully.")
-        elif choice == "11":
+                elif admin_choice == "3":
 
-            product_id = int(input("Enter product ID to remove: "))
+                    product_id = int(
+                        input("Enter product ID: ")
+                    )
 
-            product = find_product_by_id(products, product_id)
+                    admin.remove_product(
+                        products,
+                        product_id
+                    )
 
-            if product is not None:
+                    save_products(products, "products.json")
 
-                products.remove(product)
+                elif admin_choice == "4":
 
-                save_products(products, "products.json")
+                    product_id = int(
+                        input("Enter product ID: ")
+                    )
 
-                print("Product removed successfully.")
+                    quantity = int(
+                        input("Enter quantity: ")
+                    )
 
-            else:
-                print("Product not found.")
+                    product = find_product_by_id(
+                        products,
+                        product_id
+                    )
 
-        elif choice == "0":
-            print("Program finished.")
-            break
+                    if product is not None:
 
-        else:
-            print("Invalid choice.")
+                        product.reduce_stock(quantity)
 
-    except ValueError:
-        print("Invalid input. Please enter a number.")
+                        save_products(
+                            products,
+                            "products.json"
+                        )
+
+                    else:
+                        print("Product not found.")
+
+                elif admin_choice == "5":
+
+                    result = filter_available_products(
+                        products
+                    )
+
+                    show_all_products(result)
+
+                elif admin_choice == "0":
+                    break
+
+                else:
+                    print("Invalid choice.")
+
+            except ValueError:
+                print("Invalid input.")
+
+    # ================= CUSTOMER =================
+
+    elif main_choice == "2":
+
+        while True:
+
+            print("\n===== CUSTOMER MENU =====")
+
+            print("1. Show all products")
+            print("2. Search product")
+            print("3. Filter by category")
+            print("4. Sort by price")
+            print("5. Sort by rating")
+            print("6. Recommend products")
+            print("7. Add to cart")
+            print("8. View cart")
+            print("9. Checkout")
+            print("10. Apply promo code")
+            print("11. View order history")
+            print("0. Back")
+
+            customer_choice = input("Enter choice: ")
+
+            try:
+
+                if customer_choice == "1":
+
+                    show_all_products(products)
+
+                elif customer_choice == "2":
+
+                    keyword = input(
+                        "Enter product name: "
+                    )
+
+                    result = search_product(
+                        products,
+                        keyword
+                    )
+
+                    show_all_products(result)
+
+                elif customer_choice == "3":
+
+                    category = input(
+                        "Enter category: "
+                    )
+
+                    result = filter_by_category(
+                        products,
+                        category
+                    )
+
+                    show_all_products(result)
+
+                elif customer_choice == "4":
+
+                    result = sort_by_price(products)
+
+                    show_all_products(result)
+
+                elif customer_choice == "5":
+
+                    result = sort_by_rating(products)
+
+                    show_all_products(result)
+
+                elif customer_choice == "6":
+
+                    category = input(
+                        "Enter category: "
+                    )
+
+                    result = recommend_products(
+                        products,
+                        category
+                    )
+
+                    show_all_products(result)
+
+                elif customer_choice == "7":
+
+                    product_id = int(
+                        input("Enter product ID: ")
+                    )
+
+                    quantity = int(
+                        input("Enter quantity: ")
+                    )
+
+                    product = find_product_by_id(
+                        products,
+                        product_id
+                    )
+
+                    if product is not None:
+
+                        customer.add_to_cart(
+                            product,
+                            quantity
+                        )
+
+                    else:
+                        print("Product not found.")
+
+                elif customer_choice == "8":
+
+                    customer.view_cart()
+
+                elif customer_choice == "9":
+
+                    checkout(customer, orders)
+
+                    save_products(
+                        products,
+                        "products.json"
+                    )
+
+                elif customer_choice == "10":
+
+                    product_id = int(
+                        input("Enter product ID: ")
+                    )
+
+                    promo_code = input(
+                        "Enter promo code: "
+                    )
+
+                    product = find_product_by_id(
+                        products,
+                        product_id
+                    )
+
+                    if product is not None:
+
+                        final_price = apply_promo_code(
+                            product.price,
+                            promo_code
+                        )
+
+                        print(
+                            "Original price:",
+                            product.price
+                        )
+
+                        print(
+                            "Final price:",
+                            final_price
+                        )
+
+                    else:
+                        print("Product not found.")
+
+                elif customer_choice == "11":
+
+                    customer.view_order_history()
+
+                elif customer_choice == "0":
+                    break
+
+                else:
+                    print("Invalid choice.")
+
+            except ValueError:
+                print("Invalid input.")
+
+    elif main_choice == "0":
+
+        print("Program finished.")
+
+        break
+
+    else:
+        print("Invalid choice.")

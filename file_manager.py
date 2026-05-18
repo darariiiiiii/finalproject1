@@ -58,6 +58,7 @@ def load_orders(filename):
         with open(filename, "r") as file:
             data = json.load(file)
 
+
         return data
 
     except FileNotFoundError:

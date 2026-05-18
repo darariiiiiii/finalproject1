@@ -1,3 +1,5 @@
+from file_manager import save_products
+
 from products import (
     Electronics,
     Clothing,
@@ -37,6 +39,8 @@ while True:
     print("7. Recommend products")
     print("8. Apply promo code")
     print("9. Reduce stock")
+    print("10. Add product")
+    print("11. Remove product")
     print("0. Exit")
 
     choice = input("Enter your choice: ")
@@ -93,6 +97,86 @@ while True:
 
             if product is not None:
                 product.reduce_stock(quantity)
+            else:
+                print("Product not found.")
+        elif choice == "10":
+
+            print("\nChoose category:")
+            print("1. Electronics")
+            print("2. Clothing")
+            print("3. Food")
+
+            category_choice = input("Enter category: ")
+
+            product_id = len(products) + 1
+
+            name = input("Enter product name: ")
+
+            price = float(input("Enter price: "))
+
+            stock = int(input("Enter stock quantity: "))
+
+            rating = float(input("Enter rating: "))
+
+            if category_choice == "1":
+                warranty = int(input("Enter warranty months: "))
+
+                new_product = Electronics(
+                    product_id,
+                    name,
+                    price,
+                    stock,
+                    rating,
+                    warranty
+                )
+
+            elif category_choice == "2":
+                size = input("Enter size: ")
+
+                new_product = Clothing(
+                    product_id,
+                    name,
+                    price,
+                    stock,
+                    rating,
+                    size
+                )
+
+            elif category_choice == "3":
+                expiry_date = input("Enter expiry date: ")
+
+                new_product = Food(
+                    product_id,
+                    name,
+                    price,
+                    stock,
+                    rating,
+                    expiry_date
+                )
+
+            else:
+                print("Invalid category.")
+                continue
+
+            products.append(new_product)
+
+            save_products(products, "products.json")
+
+            print("Product added successfully.")
+        elif choice == "11":
+
+            product_id = int(input("Enter product ID to remove: "))
+
+            product = find_product_by_id(products, product_id)
+
+            if product is not None:
+
+                products.remove(product)
+
+                save_products(products, "products.json")
+
+                print("Product removed successfully.")
+
             else:
                 print("Product not found.")
 

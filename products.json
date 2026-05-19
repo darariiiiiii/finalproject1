@@ -70,5 +70,14 @@
         "category": "Electronics",
         "rating": 4.8,
         "warranty": 12
+    },
+    {
+        "id": 9,
+        "name": "Strawberry",
+        "price": 3500,
+        "stock": 3,
+        "category": "Food",
+        "rating": 4.8,
+        "expiry_date": "2026-12-01"
     }
 ]

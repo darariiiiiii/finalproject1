@@ -195,6 +195,11 @@ promo_entry = tk.Entry(
 
 promo_entry.pack(padx=20, fill="x")
 
+promo_entry.bind(
+    "<KeyRelease>",
+    lambda event: update_total()
+)
+
 discount_label = tk.Label(
     cart_panel,
     text="Discount: 0 KZT",
@@ -447,7 +452,6 @@ def add_product():
 
         category = category_entry.get()
 
-        # Electronics
         if category == "Electronics":
 
             new_product = Electronics(
@@ -459,7 +463,6 @@ def add_product():
                 12
             )
 
-        # Clothing
         elif category == "Clothing":
 
             new_product = Clothing(
@@ -471,7 +474,6 @@ def add_product():
                 "M"
             )
 
-        # Food
         elif category == "Food":
 
             new_product = Food(

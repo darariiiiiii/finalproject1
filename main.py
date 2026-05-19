@@ -21,17 +21,9 @@ from users import Customer, Admin
 from orders import checkout
 
 
-products = [
-    Electronics(1, "iPhone 15", 450000, 5, 4.8, 12),
-    Electronics(2, "Samsung Galaxy S24", 420000, 3, 4.7, 12),
-    Electronics(3, "Wireless Mouse", 12000, 15, 4.5, 6),
+from file_manager import load_products
 
-    Clothing(4, "Nike Hoodie", 35000, 8, 4.6, "M"),
-    Clothing(5, "Adidas T-Shirt", 18000, 10, 4.3, "L"),
-
-    Food(6, "Chocolate Box", 7000, 20, 4.9, "2026-12-01"),
-    Food(7, "Coffee Pack", 8500, 5, 4.4, "2026-10-15")
-]
+products = load_products("products.json")
 
 
 customer = Customer(

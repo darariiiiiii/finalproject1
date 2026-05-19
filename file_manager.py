@@ -1,11 +1,20 @@
 import json
 
+from products import (
+    Electronics,
+    Clothing,
+    Food
+)
+
+# ================= SAVE =================
 
 def save_products(products, filename):
+
     product_data = []
 
     for product in products:
-        product_info = {
+
+        item = {
             "id": product.product_id,
             "name": product.name,
             "price": product.price,
@@ -14,53 +23,82 @@ def save_products(products, filename):
             "rating": product.rating
         }
 
-        product_data.append(product_info)
+        # Electronics
+        if isinstance(product, Electronics):
+            item["warranty"] = product.warranty_months
+
+        # Clothing
+        elif isinstance(product, Clothing):
+            item["size"] = product.size
+
+        # Food
+        elif isinstance(product, Food):
+            item["expiry_date"] = product.expiry_date
+
+        product_data.append(item)
 
     with open(filename, "w") as file:
         json.dump(product_data, file, indent=4)
 
-    print("Products saved successfully.")
-
+# ================= LOAD =================
 
 def load_products(filename):
+
+    products = []
+
     try:
+
         with open(filename, "r") as file:
+
             data = json.load(file)
 
-        return data
+            for item in data:
+
+                category = item["category"]
+
+                # Electronics
+                if category == "Electronics":
+
+                    product = Electronics(
+                        item["id"],
+                        item["name"],
+                        item["price"],
+                        item["stock"],
+                        item["rating"],
+                        item["warranty"]
+                    )
+
+                # Clothing
+                elif category == "Clothing":
+
+                    product = Clothing(
+                        item["id"],
+                        item["name"],
+                        item["price"],
+                        item["stock"],
+                        item["rating"],
+                        item["size"]
+                    )
+
+                # Food
+                elif category == "Food":
+
+                    product = Food(
+                        item["id"],
+                        item["name"],
+                        item["price"],
+                        item["stock"],
+                        item["rating"],
+                        item["expiry_date"]
+                    )
+
+                else:
+                    continue
+
+                products.append(product)
 
     except FileNotFoundError:
+
         print("File not found.")
-        return []
 
-
-def save_orders(orders, filename):
-    order_data = []
-
-    for order in orders:
-        order_info = {
-            "order_id": order.order_id,
-            "customer_name": order.customer_name,
-            "total_price": order.total_price,
-            "date": order.order_date
-        }
-
-        order_data.append(order_info)
-
-    with open(filename, "w") as file:
-        json.dump(order_data, file, indent=4)
-
-    print("Orders saved successfully.")
-
-
-def load_orders(filename):
-    try:
-        with open(filename, "r") as file:
-            data = json.load(file)
-
-
-        return data
-
-    except FileNotFoundError:
-        print("File not found.")
-        return []
+    return products

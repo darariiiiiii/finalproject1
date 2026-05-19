@@ -5,7 +5,8 @@
         "price": 450000,
         "stock": 5,
         "category": "Electronics",
-        "rating": 4.8
+        "rating": 4.8,
+        "warranty": 12
     },
     {
         "id": 2,
@@ -13,7 +14,8 @@
         "price": 420000,
         "stock": 3,
         "category": "Electronics",
-        "rating": 4.7
+        "rating": 4.7,
+        "warranty": 12
     },
     {
         "id": 3,
@@ -21,7 +23,8 @@
         "price": 12000,
         "stock": 15,
         "category": "Electronics",
-        "rating": 4.5
+        "rating": 4.5,
+        "warranty": 6
     },
     {
         "id": 4,
@@ -29,15 +32,17 @@
         "price": 35000,
         "stock": 8,
         "category": "Clothing",
-        "rating": 4.6
+        "rating": 4.6,
+        "size": "M"
     },
     {
         "id": 5,
         "name": "Adidas T-Shirt",
         "price": 18000,
-        "stock": 8,
+        "stock": 10,
         "category": "Clothing",
-        "rating": 4.3
+        "rating": 4.3,
+        "size": "L"
     },
     {
         "id": 6,
@@ -45,7 +50,8 @@
         "price": 7000,
         "stock": 20,
         "category": "Food",
-        "rating": 4.9
+        "rating": 4.9,
+        "expiry_date": "2026-12-01"
     },
     {
         "id": 7,
@@ -53,6 +59,16 @@
         "price": 8500,
         "stock": 5,
         "category": "Food",
-        "rating": 4.4
+        "rating": 4.4,
+        "expiry_date": "2026-10-15"
+    },
+    {
+        "id": 8,
+        "name": "iphone 17",
+        "price": 800000,
+        "stock": 2,
+        "category": "Electronics",
+        "rating": 4.8,
+        "warranty": 12
     }
 ]

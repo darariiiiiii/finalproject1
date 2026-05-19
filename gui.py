@@ -1,3 +1,14 @@
+from products import (
+    Electronics,
+    Clothing,
+    Food
+)
+
+from file_manager import (
+    load_products,
+    save_products
+)
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 
@@ -22,11 +33,7 @@ CARD = "#F8FAFD"
 
 # ================= DATA =================
 
-products = [
-    [1, "iPhone 15", "Electronics", 450000, 5, 4.8],
-    [2, "Samsung S24", "Electronics", 420000, 4, 4.7],
-    [3, "Nike Hoodie", "Clothing", 35000, 8, 4.6]
-]
+products = load_products("products.json")
 
 cart = []
 orders = []
@@ -36,6 +43,7 @@ discounted_total = 0
 # ================= DISCOUNTS =================
 
 class Discount:
+
     def apply_discount(self, price):
         return price
 
@@ -46,7 +54,9 @@ class PercentageDiscount(Discount):
         self.percent = percent
 
     def apply_discount(self, price):
+
         discount_amount = price * self.percent / 100
+
         return price - discount_amount
 
 
@@ -72,11 +82,13 @@ def apply_promo_code(price, promo_code):
     if promo_code == "SALE10":
 
         discount = PercentageDiscount(10)
+
         return discount.apply_discount(price)
 
     elif promo_code == "WELCOME5000":
 
         discount = FixedDiscount(5000)
+
         return discount.apply_discount(price)
 
     else:
@@ -229,7 +241,7 @@ def calculate_total():
     total = 0
 
     for item in cart:
-        total += item[3]
+        total += item.price
 
     return total
 
@@ -265,7 +277,14 @@ def refresh_dashboard():
         dashboard_table.insert(
             "",
             tk.END,
-            values=product
+            values=(
+                product.product_id,
+                product.name,
+                product.category,
+                product.price,
+                product.stock,
+                product.rating
+            )
         )
 
 
@@ -276,7 +295,16 @@ def get_selected_product():
     if not selected:
         return None
 
-    return dashboard_table.item(selected)["values"]
+    values = dashboard_table.item(selected)["values"]
+
+    product_id = values[0]
+
+    for product in products:
+
+        if product.product_id == product_id:
+            return product
+
+    return None
 
 
 def add_to_cart():
@@ -284,17 +312,19 @@ def add_to_cart():
     product = get_selected_product()
 
     if not product:
+
         messagebox.showwarning(
             "Warning",
             "Please select a product."
         )
+
         return
 
     cart.append(product)
 
     cart_listbox.insert(
         tk.END,
-        f"{product[1]} — {product[3]} KZT"
+        f"{product.name} — {product.price} KZT"
     )
 
     update_total()
@@ -324,6 +354,7 @@ def checkout():
             "Warning",
             "Cart is empty."
         )
+
         return
 
     orders.append([
@@ -358,15 +389,15 @@ def view_details():
     messagebox.showinfo(
         "Product Details",
         f"""
-Product: {product[1]}
+Product: {product.name}
 
-Category: {product[2]}
+Category: {product.category}
 
-Price: {product[3]} KZT
+Price: {product.price} KZT
 
-Stock: {product[4]}
+Stock: {product.stock}
 
-Rating: {product[5]}
+Rating: {product.rating}
 """
     )
 
@@ -414,23 +445,70 @@ def add_product():
 
     try:
 
-        new_product = [
-            len(products) + 1,
-            name_entry.get(),
-            category_entry.get(),
-            int(price_entry.get()),
-            int(stock_entry.get()),
-            float(rating_entry.get())
-        ]
+        category = category_entry.get()
+
+        # Electronics
+        if category == "Electronics":
+
+            new_product = Electronics(
+                len(products) + 1,
+                name_entry.get(),
+                int(price_entry.get()),
+                int(stock_entry.get()),
+                float(rating_entry.get()),
+                12
+            )
+
+        # Clothing
+        elif category == "Clothing":
+
+            new_product = Clothing(
+                len(products) + 1,
+                name_entry.get(),
+                int(price_entry.get()),
+                int(stock_entry.get()),
+                float(rating_entry.get()),
+                "M"
+            )
+
+        # Food
+        elif category == "Food":
+
+            new_product = Food(
+                len(products) + 1,
+                name_entry.get(),
+                int(price_entry.get()),
+                int(stock_entry.get()),
+                float(rating_entry.get()),
+                "2026-12-01"
+            )
+
+        else:
+
+            messagebox.showerror(
+                "Error",
+                "Invalid category."
+            )
+
+            return
 
         products.append(new_product)
+
+        save_products(products, "products.json")
 
         refresh_dashboard()
 
         admin_table.insert(
             "",
             tk.END,
-            values=new_product
+            values=(
+                new_product.product_id,
+                new_product.name,
+                new_product.category,
+                new_product.price,
+                new_product.stock,
+                new_product.rating
+            )
         )
 
         name_entry.delete(0, tk.END)
@@ -445,6 +523,7 @@ def add_product():
         )
 
     except:
+
         messagebox.showerror(
             "Error",
             "Invalid product data."
@@ -664,14 +743,6 @@ admin_table.pack(
     padx=25,
     pady=20
 )
-
-for product in products:
-
-    admin_table.insert(
-        "",
-        tk.END,
-        values=product
-    )
 
 # ================= ORDERS =================
 

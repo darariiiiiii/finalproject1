@@ -1,36 +1,34 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-# ================= COLORS =================
-
-BG = "#D4D7D5"
-SIDEBAR = "#B4BECF"
-CARD = "#FFFFFF"
-BLUE = "#6E86B3"
-DARK = "#082567"
-RED = "#C00000"
-GREEN = "#3B9C5D"
-TEXT = "#082567"
-WHITE = "#FFFFFF"
-
-# ================= DATA =================
-
-products = [
-    [1, "iPhone 15", "Electronics", 450000, 5, 4.8],
-    [2, "Samsung Galaxy S24", "Electronics", 420000, 3, 4.7],
-    [3, "Nike Hoodie", "Clothing", 35000, 8, 4.6],
-    [4, "Chocolate Box", "Food", 7000, 20, 4.9]
-]
-
-cart = []
-orders = []
-
 # ================= WINDOW =================
 
 window = tk.Tk()
 window.title("Online Store Simulation")
 window.geometry("1600x900")
-window.configure(bg=BG)
+window.configure(bg="#D4D7D5")
+
+# ================= COLORS =================
+
+BG = "#D4D7D5"
+WHITE = "#FFFFFF"
+BLUE = "#6E86B3"
+DARK = "#082567"
+RED = "#C00000"
+GREEN = "#3B9C5D"
+TEXT = "#082567"
+SIDEBAR = "#B4BECF"
+
+# ================= DATA =================
+
+products = [
+    [1, "iPhone 15", "Electronics", 450000, 5, 4.8],
+    [2, "Samsung S24", "Electronics", 420000, 4, 4.7],
+    [3, "Nike Hoodie", "Clothing", 35000, 8, 4.6]
+]
+
+cart = []
+orders = []
 
 # ================= STYLE =================
 
@@ -75,7 +73,7 @@ main.pack(fill="both", expand=True)
 
 # ================= SIDEBAR =================
 
-sidebar = tk.Frame(main, bg=SIDEBAR, width=250)
+sidebar = tk.Frame(main, bg=SIDEBAR, width=240)
 sidebar.pack(side="left", fill="y")
 
 # ================= CONTENT =================
@@ -83,7 +81,7 @@ sidebar.pack(side="left", fill="y")
 content = tk.Frame(main, bg=BG)
 content.pack(side="left", fill="both", expand=True)
 
-# ================= CART PANEL =================
+# ================= CART =================
 
 cart_panel = tk.Frame(main, bg=SIDEBAR, width=320)
 cart_panel.pack(side="right", fill="y")
@@ -103,8 +101,7 @@ cart_listbox = tk.Listbox(
     bg=WHITE,
     fg=TEXT,
     font=("Trebuchet MS", 11),
-    relief="flat",
-    height=16
+    height=15
 )
 
 cart_listbox.pack(fill="x", padx=20)
@@ -114,7 +111,7 @@ total_label = tk.Label(
     text="Total: 0 KZT",
     bg=SIDEBAR,
     fg=TEXT,
-    font=("Trebuchet MS", 14, "bold")
+    font=("Trebuchet MS", 15, "bold")
 )
 
 total_label.pack(pady=20)
@@ -137,7 +134,6 @@ for page in (
 # ================= FUNCTIONS =================
 
 def show_page(page):
-
     page.tkraise()
 
 def update_total():
@@ -178,12 +174,6 @@ def add_to_cart():
     product = get_selected_product()
 
     if not product:
-
-        messagebox.showwarning(
-            "Warning",
-            "Select a product"
-        )
-
         return
 
     cart.append(product)
@@ -213,12 +203,6 @@ def remove_from_cart():
 def checkout():
 
     if len(cart) == 0:
-
-        messagebox.showwarning(
-            "Warning",
-            "Cart is empty"
-        )
-
         return
 
     total = 0
@@ -242,7 +226,7 @@ def checkout():
 
     messagebox.showinfo(
         "Success",
-        "Order completed successfully!"
+        "Checkout completed!"
     )
 
 def view_details():
@@ -250,25 +234,17 @@ def view_details():
     product = get_selected_product()
 
     if not product:
-
-        messagebox.showwarning(
-            "Warning",
-            "Select a product"
-        )
-
         return
 
-    info = (
-        f"Product: {product[1]}\n"
-        f"Category: {product[2]}\n"
-        f"Price: {product[3]} KZT\n"
-        f"Stock: {product[4]}\n"
-        f"Rating: {product[5]}"
-    )
-
     messagebox.showinfo(
-        "Product Details",
-        info
+        "Details",
+        f"""
+Product: {product[1]}
+Category: {product[2]}
+Price: {product[3]}
+Stock: {product[4]}
+Rating: {product[5]}
+"""
     )
 
 def refresh_orders():
@@ -280,8 +256,8 @@ def refresh_orders():
 
         tag = "completed"
 
-        if order[1] == "Cancelled":
-            tag = "cancelled"
+        if order[1] == "Returned":
+            tag = "returned"
 
         orders_table.insert(
             "",
@@ -290,9 +266,27 @@ def refresh_orders():
             tags=(tag,)
         )
 
+def return_product():
+
+    selected = orders_table.focus()
+
+    if not selected:
+        return
+
+    item = orders_table.item(selected)["values"]
+
+    order_id = item[0]
+
+    for order in orders:
+
+        if order[0] == order_id:
+            order[1] = "Returned"
+
+    refresh_orders()
+
 # ================= SIDEBAR BUTTONS =================
 
-def menu_button(text, command):
+def sidebar_button(text, command):
 
     return tk.Button(
         sidebar,
@@ -303,11 +297,11 @@ def menu_button(text, command):
         activebackground=DARK,
         activeforeground=WHITE,
         relief="flat",
+        bd=0,
         anchor="w",
         padx=25,
-        pady=15,
-        font=("Trebuchet MS", 12, "bold"),
-        cursor="hand2"
+        pady=18,
+        font=("Trebuchet MS", 13, "bold")
     )
 
 tk.Label(
@@ -315,52 +309,43 @@ tk.Label(
     text="MENU",
     bg=SIDEBAR,
     fg=TEXT,
-    font=("Trebuchet MS", 11, "bold")
+    font=("Trebuchet MS", 12, "bold")
 ).pack(anchor="w", padx=25, pady=(30, 10))
 
-menu_button(
+sidebar_button(
     "🏠 Dashboard",
     lambda: show_page(dashboard_page)
 ).pack(fill="x")
 
-menu_button(
+sidebar_button(
     "⚙ Admin Panel",
     lambda: show_page(admin_page)
 ).pack(fill="x")
 
-menu_button(
+sidebar_button(
     "📄 Order History",
     lambda: show_page(orders_page)
 ).pack(fill="x")
 
-menu_button(
+sidebar_button(
     "👤 My Profile",
     lambda: show_page(profile_page)
 ).pack(fill="x")
 
-# ================= DASHBOARD PAGE =================
+# ================= DASHBOARD =================
 
-dashboard_title = tk.Label(
+title = tk.Label(
     dashboard_page,
     text="👜 Dashboard",
     bg=BG,
     fg=TEXT,
-    font=("Trebuchet MS", 24, "bold")
+    font=("Trebuchet MS", 25, "bold")
 )
 
-dashboard_title.pack(anchor="w", padx=20, pady=20)
+title.pack(anchor="w", padx=20, pady=20)
 
-dashboard_card = tk.Frame(
-    dashboard_page,
-    bg=WHITE
-)
-
-dashboard_card.pack(
-    fill="both",
-    expand=True,
-    padx=20,
-    pady=10
-)
+card = tk.Frame(dashboard_page, bg=WHITE)
+card.pack(fill="both", expand=True, padx=20, pady=10)
 
 columns = (
     "ID",
@@ -372,37 +357,24 @@ columns = (
 )
 
 dashboard_table = ttk.Treeview(
-    dashboard_card,
+    card,
     columns=columns,
     show="headings",
-    height=12
+    height=10
 )
 
 for col in columns:
 
     dashboard_table.heading(col, text=col)
 
-    dashboard_table.column(
-        col,
-        width=150,
-        anchor="center"
-    )
+    dashboard_table.column(col, width=140, anchor="center")
 
-dashboard_table.pack(
-    fill="both",
-    expand=True,
-    padx=20,
-    pady=20
-)
+dashboard_table.pack(fill="both", expand=True, padx=20, pady=20)
 
-buttons_frame = tk.Frame(
-    dashboard_card,
-    bg=WHITE
-)
+# ================= BUTTONS =================
 
-buttons_frame.pack(
-    pady=(0, 20)
-)
+buttons_frame = tk.Frame(card, bg=WHITE)
+buttons_frame.pack(pady=20)
 
 def action_button(text, color, command):
 
@@ -412,10 +384,9 @@ def action_button(text, color, command):
         bg=color,
         fg=WHITE,
         relief="flat",
-        padx=25,
-        pady=12,
-        font=("Trebuchet MS", 11, "bold"),
-        cursor="hand2",
+        width=16,
+        height=2,
+        font=("Trebuchet MS", 12, "bold"),
         command=command
     )
 
@@ -443,7 +414,7 @@ action_button(
     checkout
 ).pack(side="left", padx=10)
 
-# ================= ADMIN PAGE =================
+# ================= ADMIN =================
 
 admin_title = tk.Label(
     admin_page,
@@ -455,80 +426,20 @@ admin_title = tk.Label(
 
 admin_title.pack(anchor="w", padx=20, pady=20)
 
-admin_card = tk.Frame(
-    admin_page,
-    bg=WHITE
-)
+admin_card = tk.Frame(admin_page, bg=WHITE)
+admin_card.pack(fill="both", expand=True, padx=20, pady=20)
 
-admin_card.pack(
-    fill="both",
-    expand=True,
-    padx=20,
-    pady=10
-)
+form = tk.Frame(admin_card, bg=WHITE)
+form.pack(pady=20)
 
-form_frame = tk.Frame(
-    admin_card,
-    bg=WHITE
-)
+name_entry = tk.Entry(form, width=20)
+name_entry.grid(row=0, column=0, padx=10)
 
-form_frame.pack(fill="x", padx=30, pady=30)
+category_entry = tk.Entry(form, width=20)
+category_entry.grid(row=0, column=1, padx=10)
 
-# NAME
-
-tk.Label(
-    form_frame,
-    text="Product Name",
-    bg=WHITE,
-    fg=TEXT,
-    font=("Trebuchet MS", 11, "bold")
-).grid(row=0, column=0, sticky="w", pady=(0, 8))
-
-name_entry = tk.Entry(
-    form_frame,
-    font=("Trebuchet MS", 11),
-    width=20
-)
-
-name_entry.grid(row=1, column=0, padx=10)
-
-# CATEGORY
-
-tk.Label(
-    form_frame,
-    text="Category",
-    bg=WHITE,
-    fg=TEXT,
-    font=("Trebuchet MS", 11, "bold")
-).grid(row=0, column=1, sticky="w", pady=(0, 8))
-
-category_entry = tk.Entry(
-    form_frame,
-    font=("Trebuchet MS", 11),
-    width=18
-)
-
-category_entry.grid(row=1, column=1, padx=10)
-
-# PRICE
-
-tk.Label(
-    form_frame,
-    text="Price",
-    bg=WHITE,
-    fg=TEXT,
-    font=("Trebuchet MS", 11, "bold")
-).grid(row=0, column=2, sticky="w", pady=(0, 8))
-
-price_entry = tk.Entry(
-    form_frame,
-    font=("Trebuchet MS", 11),
-    width=12
-)
-
-price_entry.grid(row=1, column=2, padx=10)
-
-# ADD PRODUCT FUNCTION
+price_entry = tk.Entry(form, width=15)
+price_entry.grid(row=0, column=2, padx=10)
 
 def add_product():
 
@@ -545,80 +456,48 @@ def add_product():
 
         products.append(new_product)
 
+        refresh_dashboard()
+
         admin_table.insert(
             "",
             tk.END,
             values=new_product
         )
 
-        refresh_dashboard()
-
-        name_entry.delete(0, tk.END)
-        category_entry.delete(0, tk.END)
-        price_entry.delete(0, tk.END)
-
-        messagebox.showinfo(
-            "Success",
-            "Product added successfully!"
-        )
-
     except:
+        pass
 
-        messagebox.showwarning(
-            "Error",
-            "Enter valid data"
-        )
-
-add_btn = tk.Button(
-    form_frame,
+tk.Button(
+    form,
     text="Add Product",
     bg=DARK,
     fg=WHITE,
     relief="flat",
-    padx=25,
+    padx=20,
     pady=10,
-    font=("Trebuchet MS", 11, "bold"),
-    cursor="hand2",
     command=add_product
-)
-
-add_btn.grid(row=1, column=3, padx=20)
-
-# ADMIN TABLE
+).grid(row=0, column=3, padx=10)
 
 admin_table = ttk.Treeview(
     admin_card,
     columns=columns,
     show="headings",
-    height=10
+    height=8
 )
 
 for col in columns:
 
     admin_table.heading(col, text=col)
 
-    admin_table.column(
-        col,
-        width=140,
-        anchor="center"
-    )
+    admin_table.column(col, width=120, anchor="center")
 
-admin_table.pack(
-    fill="both",
-    expand=True,
-    padx=30,
-    pady=(0, 30)
-)
+admin_table.pack(fill="x", padx=20, pady=20)
 
 for product in products:
 
-    admin_table.insert(
-        "",
-        tk.END,
-        values=product
-    )
+    admin_table.insert("", tk.END, values=product)
 
-# ================= ORDERS PAGE =================
+# ================= ORDERS =================
 
 orders_title = tk.Label(
     orders_page,
@@ -630,39 +509,21 @@ orders_title = tk.Label(
 
 orders_title.pack(anchor="w", padx=20, pady=20)
 
-orders_card = tk.Frame(
-    orders_page,
-    bg=WHITE
-)
-
-orders_card.pack(
-    fill="both",
-    expand=True,
-    padx=20,
-    pady=20
-)
+orders_card = tk.Frame(orders_page, bg=WHITE)
+orders_card.pack(fill="both", expand=True, padx=20, pady=20)
 
 orders_table = ttk.Treeview(
     orders_card,
     columns=("ID", "Status", "Total"),
     show="headings",
-    height=12
+    height=10
 )
 
 orders_table.heading("ID", text="Order ID")
 orders_table.heading("Status", text="Status")
 orders_table.heading("Total", text="Total")
 
-orders_table.column("ID", width=150, anchor="center")
-orders_table.column("Status", width=200, anchor="center")
-orders_table.column("Total", width=200, anchor="center")
-
-orders_table.pack(
-    fill="both",
-    expand=True,
-    padx=20,
-    pady=20
-)
+orders_table.pack(fill="x", padx=20, pady=20)
 
 orders_table.tag_configure(
     "completed",
@@ -670,11 +531,22 @@ orders_table.tag_configure(
 )
 
 orders_table.tag_configure(
-    "cancelled",
+    "returned",
     foreground="red"
 )
 
-# ================= PROFILE PAGE =================
+tk.Button(
+    orders_card,
+    text="↩ Return Product",
+    bg=RED,
+    fg=WHITE,
+    relief="flat",
+    padx=20,
+    pady=10,
+    command=return_product
+).pack(pady=10)
+
+# ================= PROFILE =================
 
 profile_title = tk.Label(
     profile_page,
@@ -686,41 +558,32 @@ profile_title = tk.Label(
 
 profile_title.pack(anchor="w", padx=20, pady=20)
 
-profile_card = tk.Frame(
-    profile_page,
-    bg=WHITE
-)
-
-profile_card.pack(
-    fill="both",
-    expand=True,
-    padx=20,
-    pady=20
-)
+profile_card = tk.Frame(profile_page, bg=WHITE)
+profile_card.pack(fill="both", expand=True, padx=20, pady=20)
 
 tk.Label(
     profile_card,
-    text="Name: Aruzhan",
+    text="Name: Symbat",
     bg=WHITE,
     fg=TEXT,
-    font=("Trebuchet MS", 15)
+    font=("Trebuchet MS", 16)
 ).pack(pady=20)
 
 tk.Label(
     profile_card,
-    text="Email: aru@aitu.kz",
+    text="Email: symbat@aitu.kz",
     bg=WHITE,
     fg=TEXT,
-    font=("Trebuchet MS", 15)
-).pack(pady=20)
+    font=("Trebuchet MS", 16)
+).pack()
 
 tk.Label(
     profile_card,
-    text="Role: Customer",
+    text="Role: Admin",
     bg=WHITE,
     fg=TEXT,
-    font=("Trebuchet MS", 15)
-).pack(pady=20)
+    font=("Trebuchet MS", 16)
+).pack(pady=10)
 
 # ================= START =================
 
